@@ -24,7 +24,7 @@
     }
 
     header {
-      margin-bottom: 28px;
+      margin-bottom: 24px;
     }
 
     h1 {
@@ -37,7 +37,7 @@
     .authors {
       font-size: 1rem;
       color: #374151;
-      margin-bottom: 18px;
+      margin-bottom: 10px;
     }
 
     .subtitle {
@@ -47,13 +47,115 @@
       max-width: 650px;
     }
 
+    .subtitle a {
+      margin-right: 12px;
+    }
+
     main {
       display: flex;
       flex-direction: column;
-      gap: 24px;
+      gap: 20px;
       margin-top: 8px;
     }
 
+    /* Global controls */
+    .controls-card {
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      padding: 12px 14px;
+      background: #f9fafb;
+      font-size: 0.9rem;
+    }
+
+    .controls-top {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .controls-title {
+      font-weight: 500;
+      font-size: 0.9rem;
+      color: #374151;
+    }
+
+    .controls-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    button {
+      font-family: inherit;
+      font-size: 0.85rem;
+      border-radius: 999px;
+      border: 1px solid #d1d5db;
+      padding: 5px 12px;
+      background: #ffffff;
+      color: #111827;
+      cursor: pointer;
+    }
+
+    button.primary {
+      background: #111827;
+      color: #f9fafb;
+      border-color: #111827;
+    }
+
+    button:hover {
+      background: #f3f4f6;
+    }
+
+    button.primary:hover {
+      background: #1f2933;
+    }
+
+    .scrubber-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.8rem;
+      color: #6b7280;
+    }
+
+    .scrubber-row .time {
+      width: 56px;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+
+    input[type="range"] {
+      flex: 1;
+      appearance: none;
+      height: 4px;
+      border-radius: 999px;
+      background: #e5e7eb;
+      outline: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      appearance: none;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #111827;
+      cursor: pointer;
+      margin-top: -4px;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #111827;
+      border: none;
+      cursor: pointer;
+    }
+
+    /* Video comparison panels */
     .compare-row {
       display: flex;
       flex-wrap: wrap;
@@ -80,16 +182,17 @@
       margin-bottom: 8px;
     }
 
-    .image-wrapper {
+    .video-wrapper {
       border: 1px solid #e5e7eb;
       border-radius: 4px;
       overflow: hidden;
       background: #ffffff;
     }
 
-    .image-wrapper img {
-      width: 100%;
+    video {
       display: block;
+      width: 100%;
+      height: auto;
     }
 
     .info {
@@ -98,18 +201,6 @@
       color: #374151;
       border-top: 1px solid #e5e7eb;
       padding-top: 14px;
-    }
-
-    .metrics {
-      margin-top: 6px;
-      font-size: 0.85rem;
-    }
-
-    .metrics code {
-      background: #f3f4f6;
-      padding: 2px 4px;
-      border-radius: 4px;
-      font-size: 0.8rem;
     }
 
     footer {
@@ -138,20 +229,54 @@
     </header>
 
     <main>
+      <!-- Global playback controls -->
+      <section class="controls-card">
+        <div class="controls-top">
+          <div class="controls-title">Global playback controls</div>
+          <div class="controls-buttons">
+            <button id="playBoth" class="primary">Play both</button>
+            <button id="pauseBoth">Pause both</button>
+            <button id="resetBoth">Reset</button>
+          </div>
+        </div>
+        <div class="scrubber-row">
+          <span class="time" id="currentTimeLabel">0:00</span>
+          <input id="scrubber" type="range" min="0" step="0.01" value="0" />
+          <span class="time" id="durationLabel">0:00</span>
+        </div>
+      </section>
+
+      <!-- Side-by-side videos -->
       <section class="compare-row">
         <article class="panel">
           <div class="panel-title">Before — Original</div>
           <div class="panel-note">Reference clip (input).</div>
-          <div class="image-wrapper">
-            <img src="before.gif" alt="Original video" />
+          <div class="video-wrapper">
+            <video
+              id="originalVideo"
+              controls
+              preload="metadata"
+              playsinline
+            >
+              <source src="original.mp4" type="video/mp4" />
+              Your browser does not support HTML5 video.
+            </video>
           </div>
         </article>
 
         <article class="panel">
           <div class="panel-title">After — Reconstructed</div>
           <div class="panel-note">Output produced by PVR-via-MAPU.</div>
-          <div class="image-wrapper">
-            <img src="after.gif" alt="Reconstructed video" />
+          <div class="video-wrapper">
+            <video
+              id="reconstructedVideo"
+              controls
+              preload="metadata"
+              playsinline
+            >
+              <source src="reconstructed.mp4" type="video/mp4" />
+              Your browser does not support HTML5 video.
+            </video>
           </div>
         </article>
       </section>
@@ -161,12 +286,6 @@
           The animation on the right visualizes the reconstructed frames produced by the
           PVR-via-MAPU pipeline.
         </p>
-
-        <!-- <div class="metrics">
-          PSNR: <code>37.75 dB</code> &middot;
-          SSIM: <code>0.978</code> &middot;
-          MSE: <code>10.93</code>
-        </div> -->
       </section>
 
       <footer>
@@ -174,5 +293,83 @@
       </footer>
     </main>
   </div>
+
+  <script>
+    const original = document.getElementById("originalVideo");
+    const reconstructed = document.getElementById("reconstructedVideo");
+    const playBothBtn = document.getElementById("playBoth");
+    const pauseBothBtn = document.getElementById("pauseBoth");
+    const resetBothBtn = document.getElementById("resetBoth");
+    const scrubber = document.getElementById("scrubber");
+    const currentTimeLabel = document.getElementById("currentTimeLabel");
+    const durationLabel = document.getElementById("durationLabel");
+
+    function formatTime(seconds) {
+      if (!isFinite(seconds)) return "0:00";
+      const m = Math.floor(seconds / 60);
+      const s = Math.floor(seconds % 60);
+      return m + ":" + (s < 10 ? "0" + s : s);
+    }
+
+    function updateDuration() {
+      const dur = Math.min(
+        original.duration || 0,
+        reconstructed.duration || 0
+      );
+      if (dur > 0) {
+        scrubber.max = dur.toFixed(2);
+        durationLabel.textContent = formatTime(dur);
+      }
+    }
+
+    function updateCurrentTime() {
+      const t = Math.min(original.currentTime || 0, reconstructed.currentTime || 0);
+      scrubber.value = t;
+      currentTimeLabel.textContent = formatTime(t);
+    }
+
+    // Global playback controls
+    playBothBtn.addEventListener("click", () => {
+      original.play();
+      reconstructed.play();
+    });
+
+    pauseBothBtn.addEventListener("click", () => {
+      original.pause();
+      reconstructed.pause();
+    });
+
+    resetBothBtn.addEventListener("click", () => {
+      original.pause();
+      reconstructed.pause();
+      original.currentTime = 0;
+      reconstructed.currentTime = 0;
+      scrubber.value = 0;
+      currentTimeLabel.textContent = "0:00";
+    });
+
+    // Scrub both videos together
+    scrubber.addEventListener("input", () => {
+      const t = parseFloat(scrubber.value) || 0;
+      original.currentTime = t;
+      reconstructed.currentTime = t;
+      currentTimeLabel.textContent = formatTime(t);
+    });
+
+    // Keep UI in sync while playing
+    original.addEventListener("timeupdate", updateCurrentTime);
+    reconstructed.addEventListener("timeupdate", updateCurrentTime);
+
+    // When metadata is ready, set duration
+    original.addEventListener("loadedmetadata", updateDuration);
+    reconstructed.addEventListener("loadedmetadata", updateDuration);
+
+    // In case metadata was ready before JS
+    window.addEventListener("load", () => {
+      if (original.readyState >= 1 || reconstructed.readyState >= 1) {
+        updateDuration();
+      }
+    });
+  </script>
 </body>
 </html>
