@@ -2,21 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>PVR-via-MAPU: Video Reconstruction Demo</title>
+  <title>PVR-via-MAPU: Parallel Video Reconstruction via Motion-Aware Predictive Upsampling</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    :root {
-      --bg: #050814;
-      --card-bg: #0f172a;
-      --accent: #38bdf8;
-      --accent-soft: rgba(56, 189, 248, 0.2);
-      --text-main: #e5e7eb;
-      --text-muted: #9ca3af;
-      --border-subtle: #1f2937;
-      --radius-xl: 18px;
-      --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.7);
-    }
-
     * {
       box-sizing: border-box;
       margin: 0;
@@ -24,303 +12,116 @@
     }
 
     body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
-        "Segoe UI", sans-serif;
-      background: radial-gradient(circle at top, #0b1120 0, #020617 45%, #000 100%);
-      color: var(--text-main);
-      min-height: 100vh;
-      padding: 24px;
-      display: flex;
-      justify-content: center;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #ffffff;
+      color: #111827;
+      padding: 32px 20px;
     }
 
     .page {
-      max-width: 1100px;
-      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
     }
 
     header {
-      margin-bottom: 24px;
-    }
-
-    .title-row {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 12px;
+      margin-bottom: 28px;
     }
 
     h1 {
-      font-size: clamp(1.6rem, 2.6vw, 2.4rem);
+      font-size: 1.9rem;
       font-weight: 600;
-      letter-spacing: 0.03em;
-      display: flex;
-      align-items: center;
-      gap: 10px;
+      margin-bottom: 4px;
+      text-align: left;
     }
 
-    h1 span.badge {
-      font-size: 0.75rem;
-      padding: 3px 8px;
-      border-radius: 999px;
-      border: 1px solid var(--accent-soft);
-      background: rgba(15, 23, 42, 0.8);
-      color: var(--accent);
+    .authors {
+      font-size: 1rem;
+      color: #374151;
+      margin-bottom: 18px;
     }
 
     .subtitle {
-      font-size: 0.9rem;
-      color: var(--text-muted);
-      max-width: 640px;
-      line-height: 1.5;
-      margin-top: 6px;
-    }
-
-    .pill-row {
-      margin-top: 10px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .pill {
-      font-size: 0.75rem;
-      padding: 4px 9px;
-      border-radius: 999px;
-      border: 1px solid var(--border-subtle);
-      color: var(--text-muted);
-      background: rgba(15, 23, 42, 0.8);
+      font-size: 0.95rem;
+      color: #4b5563;
+      line-height: 1.45;
+      max-width: 650px;
     }
 
     main {
       display: flex;
       flex-direction: column;
-      gap: 18px;
+      gap: 24px;
+      margin-top: 8px;
     }
 
-    .controls-card {
-      background: linear-gradient(
-        135deg,
-        rgba(15, 23, 42, 0.94),
-        rgba(15, 23, 42, 0.9)
-      );
-      border-radius: var(--radius-xl);
-      border: 1px solid var(--border-subtle);
-      padding: 14px 16px;
-      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.75);
-      backdrop-filter: blur(14px);
-    }
-
-    .controls-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-
-    .controls-title {
-      font-size: 0.95rem;
-      font-weight: 500;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .controls-title span.dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 999px;
-      background: var(--accent);
-      box-shadow: 0 0 10px rgba(56, 189, 248, 0.8);
-    }
-
-    .controls-buttons {
+    .compare-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
-      justify-content: flex-end;
+      gap: 16px;
     }
 
-    button {
-      font-family: inherit;
-      font-size: 0.85rem;
-      border-radius: 999px;
-      border: 1px solid transparent;
-      padding: 6px 12px;
-      background: rgba(15, 23, 42, 0.9);
-      color: var(--text-main);
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: background 0.15s ease, border-color 0.15s ease,
-        transform 0.08s ease;
+    .panel {
+      flex: 1 1 260px;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      padding: 12px;
+      background: #fafafa;
     }
 
-    button.primary {
-      background: radial-gradient(circle at top left, #38bdf8, #0ea5e9);
-      color: #0b1120;
+    .panel-title {
+      font-size: 0.95rem;
       font-weight: 500;
-      box-shadow: 0 8px 18px rgba(56, 189, 248, 0.5);
+      margin-bottom: 6px;
     }
 
-    button:hover {
-      transform: translateY(-1px);
-      border-color: rgba(148, 163, 184, 0.6);
-    }
-
-    button.primary:hover {
-      border-color: rgba(8, 47, 73, 0.9);
-    }
-
-    button:active {
-      transform: translateY(0);
-    }
-
-    .scrubber-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
+    .panel-note {
       font-size: 0.8rem;
-      color: var(--text-muted);
+      color: #6b7280;
+      margin-bottom: 8px;
     }
 
-    .scrubber-row span.time {
-      width: 58px;
-      text-align: center;
-      font-variant-numeric: tabular-nums;
-    }
-
-    input[type="range"] {
-      flex: 1;
-      appearance: none;
-      height: 4px;
-      border-radius: 999px;
-      background: #111827;
-      outline: none;
-    }
-
-    input[type="range"]::-webkit-slider-thumb {
-      appearance: none;
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      background: var(--accent);
-      box-shadow: 0 0 0 4px var(--accent-soft);
-      cursor: pointer;
-      margin-top: -4px;
-    }
-
-    input[type="range"]::-moz-range-thumb {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      background: var(--accent);
-      border: none;
-      box-shadow: 0 0 0 4px var(--accent-soft);
-      cursor: pointer;
-    }
-
-    .videos-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 18px;
-    }
-
-    .video-card {
-      flex: 1 1 320px;
-      background: rgba(15, 23, 42, 0.95);
-      border-radius: var(--radius-xl);
-      border: 1px solid var(--border-subtle);
-      box-shadow: var(--shadow-soft);
-      padding: 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      min-width: 0;
-    }
-
-    .video-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 8px;
-    }
-
-    .video-title {
-      font-size: 0.95rem;
-      font-weight: 500;
-    }
-
-    .video-meta {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .video-meta span.dot {
-      width: 4px;
-      height: 4px;
-      border-radius: 999px;
-      background: #4b5563;
-    }
-
-    .video-wrapper {
-      position: relative;
-      border-radius: 12px;
+    .image-wrapper {
+      border: 1px solid #e5e7eb;
+      border-radius: 4px;
       overflow: hidden;
-      background: #020617;
-      border: 1px solid #020617;
+      background: #ffffff;
     }
 
-    video {
+    .image-wrapper img {
       width: 100%;
       display: block;
-      outline: none;
     }
 
-    .hint {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      line-height: 1.4;
+    .info {
+      font-size: 0.9rem;
+      line-height: 1.5;
+      color: #374151;
+      border-top: 1px solid #e5e7eb;
+      padding-top: 14px;
+    }
+
+    .metrics {
+      margin-top: 6px;
+      font-size: 0.85rem;
+    }
+
+    .metrics code {
+      background: #f3f4f6;
+      padding: 2px 4px;
+      border-radius: 4px;
+      font-size: 0.8rem;
     }
 
     footer {
-      margin-top: 12px;
-      font-size: 0.75rem;
-      color: var(--text-muted);
+      margin-top: 20px;
+      font-size: 0.8rem;
+      color: #6b7280;
       text-align: right;
-    }
-
-    footer code {
-      font-size: 0.7rem;
-      background: rgba(15, 23, 42, 0.9);
-      padding: 2px 5px;
-      border-radius: 6px;
-      border: 1px solid #111827;
     }
 
     @media (max-width: 640px) {
       body {
-        padding: 18px 14px;
-      }
-
-      .controls-top {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .controls-buttons {
-        width: 100%;
-      }
-
-      .controls-buttons button {
-        flex: 1;
-        justify-content: center;
+        padding: 20px 14px;
       }
     }
   </style>
@@ -328,213 +129,50 @@
 <body>
   <div class="page">
     <header>
-      <div class="title-row">
-        <h1>
-          PVR-via-MAPU
-          <span class="badge">Reconstruction Demo</span>
-        </h1>
-      </div>
+      <h1>PVR-via-MAPU: Parallel Video Reconstruction via Motion-Aware Predictive Upsampling</h1>
+      <div class="authors">Andrew Kim, Martin Lee</div>
       <p class="subtitle">
-        This page compares the original input video with the reconstructed output
-        produced by the PVR-via-MAPU pipeline. Use the global controls to play,
-        pause, and scrub both videos in sync, then visually inspect how closely
-        the reconstruction matches the source.
+        <a href="https://github.com/punchthatface/15418-FinalProject">Proposal</a><br />
+        <a href="https://github.com/punchthatface/15418-FinalProject">Code</a>
       </p>
-      <div class="pill-row">
-        <div class="pill">Original vs reconstructed</div>
-        <div class="pill">Side by side comparison</div>
-        <div class="pill">Synchronized playback</div>
-      </div>
     </header>
 
     <main>
-      <!-- Global controls -->
-      <section class="controls-card">
-        <div class="controls-top">
-          <div class="controls-title">
-            <span class="dot"></span>
-            <span>Global playback controls</span>
+      <section class="compare-row">
+        <article class="panel">
+          <div class="panel-title">Before — Original</div>
+          <div class="panel-note">Reference clip (input).</div>
+          <div class="image-wrapper">
+            <img src="before.gif" alt="Original video" />
           </div>
-          <div class="controls-buttons">
-            <button id="playBoth" class="primary">
-              ▶ Play both
-            </button>
-            <button id="pauseBoth">
-              ❚❚ Pause both
-            </button>
-            <button id="resetBoth">
-              ⏮ Reset to start
-            </button>
+        </article>
+
+        <article class="panel">
+          <div class="panel-title">After — Reconstructed</div>
+          <div class="panel-note">Output produced by PVR-via-MAPU.</div>
+          <div class="image-wrapper">
+            <img src="after.gif" alt="Reconstructed video" />
           </div>
-        </div>
-        <div class="scrubber-row">
-          <span class="time" id="currentTimeLabel">0:00</span>
-          <input id="scrubber" type="range" min="0" step="0.01" value="0" />
-          <span class="time" id="durationLabel">0:00</span>
-        </div>
+        </article>
       </section>
 
-      <!-- Videos -->
-      <section class="videos-row">
-        <article class="video-card">
-          <div class="video-header">
-            <div class="video-title">Original input</div>
-            <div class="video-meta">
-              <span>Ground truth</span>
-              <span class="dot"></span>
-              <span id="origResolution">–</span>
-            </div>
-          </div>
-          <div class="video-wrapper">
-            <video
-              id="originalVideo"
-              controls
-              preload="metadata"
-              playsinline
-            >
-              <source src="original.mp4" type="video/mp4" />
-              Your browser does not support HTML5 video.
-            </video>
-          </div>
-          <p class="hint">
-            This is the reference clip. For best results, use an H.264 encoded
-            MP4 file named <code>original.mp4</code> in the same folder as this
-            page.
-          </p>
-        </article>
+      <section class="info">
+        <p>
+          The animation on the right visualizes the reconstructed frames produced by the
+          PVR-via-MAPU pipeline.
+        </p>
 
-        <article class="video-card">
-          <div class="video-header">
-            <div class="video-title">Reconstructed output</div>
-            <div class="video-meta">
-              <span>Model output</span>
-              <span class="dot"></span>
-              <span id="reconResolution">–</span>
-            </div>
-          </div>
-          <div class="video-wrapper">
-            <video
-              id="reconstructedVideo"
-              controls
-              preload="metadata"
-              playsinline
-            >
-              <source src="reconstructed.mp4" type="video/mp4" />
-              Your browser does not support HTML5 video.
-            </video>
-          </div>
-          <p class="hint">
-            This is the video after reconstruction by PVR-via-MAPU. Replace
-            <code>reconstructed.mp4</code> with your own output to update the
-            demo.
-          </p>
-        </article>
+        <!-- <div class="metrics">
+          PSNR: <code>37.75 dB</code> &middot;
+          SSIM: <code>0.978</code> &middot;
+          MSE: <code>10.93</code>
+        </div> -->
       </section>
 
       <footer>
-        Place <code>original.mp4</code> and <code>reconstructed.mp4</code> in
-        the repository root. GitHub Pages will serve this page as a static
-        demo.
+        https://github.com/punchthatface/15418-FinalProject
       </footer>
     </main>
   </div>
-
-  <script>
-    const original = document.getElementById("originalVideo");
-    const reconstructed = document.getElementById("reconstructedVideo");
-    const playBothBtn = document.getElementById("playBoth");
-    const pauseBothBtn = document.getElementById("pauseBoth");
-    const resetBothBtn = document.getElementById("resetBoth");
-    const scrubber = document.getElementById("scrubber");
-    const currentTimeLabel = document.getElementById("currentTimeLabel");
-    const durationLabel = document.getElementById("durationLabel");
-    const origResolution = document.getElementById("origResolution");
-    const reconResolution = document.getElementById("reconResolution");
-
-    function formatTime(seconds) {
-      if (!isFinite(seconds)) return "0:00";
-      const m = Math.floor(seconds / 60);
-      const s = Math.floor(seconds % 60);
-      return m + ":" + (s < 10 ? "0" + s : s);
-    }
-
-    function updateDuration() {
-      const dur = Math.min(
-        original.duration || 0,
-        reconstructed.duration || 0
-      );
-      if (dur > 0) {
-        scrubber.max = dur.toFixed(2);
-        durationLabel.textContent = formatTime(dur);
-      }
-    }
-
-    function updateCurrentTime() {
-      const t = Math.min(original.currentTime || 0, reconstructed.currentTime || 0);
-      scrubber.value = t;
-      currentTimeLabel.textContent = formatTime(t);
-    }
-
-    function setResolutionLabel(video, labelEl) {
-      if (video.videoWidth && video.videoHeight) {
-        labelEl.textContent = video.videoWidth + " × " + video.videoHeight;
-      }
-    }
-
-    // Global playback controls
-    playBothBtn.addEventListener("click", () => {
-      original.play();
-      reconstructed.play();
-    });
-
-    pauseBothBtn.addEventListener("click", () => {
-      original.pause();
-      reconstructed.pause();
-    });
-
-    resetBothBtn.addEventListener("click", () => {
-      original.pause();
-      reconstructed.pause();
-      original.currentTime = 0;
-      reconstructed.currentTime = 0;
-      scrubber.value = 0;
-      currentTimeLabel.textContent = "0:00";
-    });
-
-    // Scrubbing in sync
-    scrubber.addEventListener("input", () => {
-      const t = parseFloat(scrubber.value) || 0;
-      original.currentTime = t;
-      reconstructed.currentTime = t;
-      currentTimeLabel.textContent = formatTime(t);
-    });
-
-    // Update UI on time updates
-    original.addEventListener("timeupdate", updateCurrentTime);
-    reconstructed.addEventListener("timeupdate", updateCurrentTime);
-
-    // When metadata is ready, update durations and resolution labels
-    function handleLoadedMetadata(video, labelEl) {
-      updateDuration();
-      setResolutionLabel(video, labelEl);
-    }
-
-    original.addEventListener("loadedmetadata", () =>
-      handleLoadedMetadata(original, origResolution)
-    );
-    reconstructed.addEventListener("loadedmetadata", () =>
-      handleLoadedMetadata(reconstructed, reconResolution)
-    );
-
-    // Fallback in case metadata fires before JS is loaded
-    window.addEventListener("load", () => {
-      if (original.readyState >= 1) {
-        handleLoadedMetadata(original, origResolution);
-      }
-      if (reconstructed.readyState >= 1) {
-        handleLoadedMetadata(reconstructed, reconResolution);
-      }
-    });
-  </script>
 </body>
 </html>
